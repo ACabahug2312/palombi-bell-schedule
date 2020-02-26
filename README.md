@@ -12,6 +12,7 @@ that not all middle schools use the same schedule as Palombi.
 * Add Settings That Adjust the Rainbow Text Speed or Disable it
 * Create a Bookmarklet Version of the Bell Tracker
 * Fix Glitch Where Fading Text Flickers
+* Finish Friday Schedule for the 8 Period Schedule 
 
 ## Changelog
 + Pure-CSS Rainbow Animated Text
