@@ -15,12 +15,12 @@ that not all middle schools use the same schedule as Palombi.
 * Finish Friday Schedule for the 8 Period Schedule 
 
 ## Changelog
-+ + Pure-CSS Rainbow Animated Text
-+ + Last 30-Second Counter
-+ + Modes to Switch Between 8 Periods, 9 Periods, and 10 Periods
-- - LEAD Schedule (After School)
-- - Old Jquery Rainbow Animation Script
-* * Now Using Neon Colors for Rainbow
-* * Source Code has Been Organized
-* * Fixed Bug Where Time Doesn't Update on Time
-* * Fixed Bug Where Rainbow Animation Cuts Off
++ Added Pure-CSS Rainbow Animated Text
++ Added Last 30-Second Counter
++ Added Modes to Switch Between 8 Periods, 9 Periods, and 10 Periods
+- Removed LEAD Schedule (After School)
+- Removed Old Jquery Rainbow Animation Script
+- Removed Old Time Calculation Functions
+* Info Now Using Neon Colors for Rainbow
+* Info Fixed Bug Where Time Doesn't Update on Time
+* Info Fixed Bug Where Rainbow Animation Cuts Off
