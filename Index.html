@@ -1,0 +1,350 @@
+<!--
+Peter J. Palombi Clock
+25022020 PC
+
+Developed by: Aedan Cabahug (7 Blue : 8 Red)
+-->
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Palombi Bell Tracker</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300&display=swap" rel="stylesheet">
+    <script type="text/javascript">
+      (function () {
+        function create_time(hh, mm, ss, hh2, mm2, ss2) {
+          return [
+            new Date("Tue January 1 2000 " + (hh + ":" + mm + ":" + ss)),
+            new Date("Tue January 1 2000 " + (hh2 + ":" + mm2 + ":" + ss2))
+          ];
+        }
+      
+        function time_difference(T1, T2) {
+          return Math.abs(T2 - T1);
+        }
+      
+        // 8 Periods (1999-2015)
+        var scheduleR8 = [
+          create_time(07, 42, 00, 07, 55, 00), // Advisory
+          create_time(08, 00, 00, 08, 44, 00),
+          create_time(08, 49, 00, 09, 33, 00),
+          create_time(09, 38, 00, 10, 22, 00),
+          create_time(10, 27, 00, 11, 11, 00),
+          create_time(11, 16, 00, 12, 00, 00),
+          create_time(12, 05, 00, 12, 49, 00),
+          create_time(12, 54, 00, 13, 38, 00),
+          create_time(13, 43, 00, 14, 27, 00),
+        ];
+      
+        var scheduleF8 = [ // Todo: Calculate class length and advisory duration
+          create_time(07, 42, 00, 00, 00, 00),
+          create_time(00, 00, 00, 00, 00, 00),
+          create_time(00, 00, 00, 00, 00, 00),
+          create_time(00, 00, 00, 00, 00, 00),
+          create_time(00, 00, 00, 00, 00, 00),
+          create_time(00, 00, 00, 00, 00, 00),
+          create_time(00, 00, 00, 00, 00, 00),
+          create_time(00, 00, 00, 13, 27, 00),
+        ];
+      
+        // 9 Periods (2015-2019)
+        var scheduleR9 = [
+          create_time(07, 42, 00, 07, 51, 00), // Advisory
+          create_time(07, 54, 00, 08, 35, 00),
+          create_time(08, 38, 00, 09, 19, 00),
+          create_time(09, 22, 00, 10, 03, 00),
+          create_time(10, 06, 00, 10, 47, 00),
+          create_time(10, 50, 00, 11, 31, 00),
+          create_time(11, 34, 00, 12, 15, 00),
+          create_time(12, 18, 00, 12, 59, 00),
+          create_time(13, 27, 00, 13, 43, 00),
+          create_time(13, 27, 00, 14, 27, 00),
+        ];
+      
+        var scheduleF9 = [
+          create_time(07, 42, 00, 08, 12, 00), // Advisory
+          create_time(08, 15, 00, 08, 47, 00),
+          create_time(08, 50, 00, 09, 22, 00),
+          create_time(09, 25, 00, 09, 57, 00),
+          create_time(10, 10, 00, 10, 32, 00),
+          create_time(10, 35, 00, 11, 07, 00),
+          create_time(11, 10, 00, 11, 42, 00),
+          create_time(12, 45, 00, 12, 17, 00),
+          create_time(12, 20, 00, 12, 52, 00),
+          create_time(12, 55, 00, 13, 27, 00),
+        ];
+      
+        // 10 Periods (2019-present)
+        var scheduleR10 = [
+          create_time(07, 32, 00, 08, 10, 00),
+          create_time(08, 12, 00, 08, 50, 00),
+          create_time(08, 52, 00, 09, 31, 00),
+          create_time(09, 33, 00, 10, 12, 00),
+          create_time(10, 14, 00, 10, 53, 00),
+          create_time(10, 55, 00, 11, 34, 00),
+          create_time(11, 36, 00, 12, 15, 00),
+          create_time(12, 17, 00, 12, 56, 00),
+          create_time(12, 58, 00, 13, 37, 00),
+          create_time(13, 39, 00, 14, 17, 00),
+        ];
+      
+        var scheduleF10 = [
+          create_time(07, 32, 00, 08, 03, 00),
+          create_time(08, 12, 00, 08, 36, 00),
+          create_time(08, 52, 00, 09, 09, 00),
+          create_time(09, 33, 00, 09, 42, 00),
+          create_time(09, 14, 00, 10, 15, 00),
+          create_time(10, 55, 00, 10, 48, 00),
+          create_time(10, 36, 00, 11, 21, 00),
+          create_time(11, 17, 00, 11, 54, 00),
+          create_time(11, 58, 00, 12, 27, 00),
+          create_time(12, 39, 00, 13, 00, 00),
+        ];
+      
+        var include_seconds = false;
+        var military_time = false;
+        var current_schedule;
+        var mode = 2;
+      
+        var clock_time;
+        var period_text;
+        var update_text;
+      
+        function load_schedule() {
+          var day = new Date().getDay();
+      
+          switch (mode) {
+            case 0:
+              if (day == 5) current_schedule = scheduleF8;
+              current_schedule = scheduleR8;
+              break;
+            case 1:
+              if (day == 5) current_schedule = scheduleF9;
+              current_schedule = scheduleR9;
+              break;
+            case 2:
+              if (day == 5) current_schedule = scheduleF10;
+              current_schedule = scheduleR10;
+              break;
+          }
+        }
+      
+        function get_period() {
+          for (var i = 0; i < current_schedule.length; i++) {
+            if (current_schedule[i][0] <= get_time()
+                && current_schedule[i][1] >= get_time()) {
+                  if ((mode == 0 && i == 0) || (mode == 1 && i == 0))
+                    return "A";
+                  return i;
+            }
+          }
+      
+          if (get_time() < current_schedule[0][0] ||
+              get_time() > current_schedule.slice(-1)[0][1])
+              return -1;
+          return -2;
+        }
+      
+        function get_time() {
+          var hh = get_hours();
+          var mm = get_minutes();
+          var ss = get_seconds();
+          return new Date("Tue January 1 2000 " + (hh + ":" + mm + ":" + ss));
+        }
+      
+        function get_hours() {
+          return new Date().getHours();
+        }
+      
+        function get_minutes() {
+          return new Date().getMinutes();
+        }
+      
+        function get_seconds() {
+          return new Date().getSeconds();
+        }
+      
+        function update_clock() {
+          function pad_time(t) {
+            return t.length < 2 ? "0" + t : t;
+          }
+      
+          var clock_text = "";
+      
+          if (military_time) {
+            clock_text = get_hours()
+                         + pad_time(get_minutes())
+                         + (include_seconds ? pad_time(get_seconds()) : "")
+          } else {
+            var hours = get_hours();
+            var minutes = get_minutes();
+            var seconds = get_seconds();
+      
+            var afternoon = hours >= 12;
+      
+            clock_text = (afternoon ? hours == 12 ? 12 : hours - 12 : hours)
+                         + ":" + pad_time(minutes.toString())
+                         + (include_seconds ? ":" + pad_time(seconds.toString()) : "")
+                         + (afternoon ? " PM" : " AM");
+          }
+      
+          clock_time.innerHTML = clock_text;
+      
+          if (get_period() == -1)
+            period_text.innerHTML = "School finished";
+          else if (get_period() == -2)
+            period_text.innerHTML = "Passing period";
+          else if (get_period() == "A")
+            period_text.innerHTML = "Advisory";
+          else period_text.innerHTML = "Period " + (get_period() + 1);
+      
+          if (get_period() != -2 && get_period() != -1) {
+            var time_end = -1;
+            if (get_period() == "A") time_end = current_schedule[0][1];
+            else time_end = current_schedule[get_period()][1];
+      
+            var time_left = Math.round((time_end - get_time()) / 60000);
+            if (get_seconds() >= 30) {
+              var seconds_left = Math.round((time_end - get_time()) / 1000);
+              if (seconds_left == 1)
+                period_text.innerHTML += " (" + seconds_left + " second left)";
+              else period_text.innerHTML += " (" + seconds_left + " seconds left)";
+            } else if (time_left == 1)
+              period_text.innerHTML += " (1 minute left)";
+            else period_text.innerHTML += " (" + time_left + " minutes left)";
+          }
+        }
+      
+        window.onload = function () {
+          clock_time = document.getElementById("time");
+          period_text = document.getElementById("period");
+          update_text = document.getElementById("update");
+      
+          load_schedule();
+          setInterval(update_clock);
+        };
+      
+        var fadeIn = false;
+        var fadeOut = false;
+        var finished = false;
+      
+        window.onkeydown = function (evt) {
+          if (evt.keyCode == 77) {
+            mode ++;
+            if (mode == 3) mode = 0;
+            load_schedule();
+      
+            update_text.innerHTML = "Period count: " +
+              (mode == 0 ? 8 : mode == 1 ? 9 : 10);
+      
+              if (!fadeIn && !finished) {
+                fadeIn = true;
+                var i = 0;
+                function tl() {
+                  i++;
+                  update_text.style.opacity = Math.round((i / 100) * 100) / 100;
+                  if (i == 100) {
+                    fadeIn = false;
+                    finished = true;
+                    return;
+                  };
+                  setTimeout(tl, 10);
+                }
+                tl();
+              }
+      
+            setTimeout(function () {
+              if (update_text.style.opacity == "1") {
+                fadeOut = true;
+                finished = false;
+                var i = 100;
+                function tl() {
+                  i--;
+                  update_text.style.opacity = Math.round((i / 100) * 100) / 100;
+                  if (i == 0) {
+                    fadeOut = false;
+                    update_text.innerHTML = "";
+                    return;
+                  };
+                  setTimeout(tl, 10);
+                }
+                tl();
+              }
+            }, 3750);
+          }
+        };
+      })();
+    </script>
+
+    <style type="text/css">
+      @keyframes rainbow {
+        0% {background-position: 0% 100%}
+        5% {background-position: 5% 100%}
+        10% {background-position: 10% 100%}
+        15% {background-position: 15% 100%}
+        20% {background-position: 20% 100%}
+        25% {background-position: 25% 100%}
+        30% {background-position: 30% 100%}
+        35% {background-position: 35% 100%}
+        40% {background-position: 40% 100%}
+        45% {background-position: 45% 100%}
+        50% {background-position: 50% 100%}
+        55% {background-position: 55% 100%}
+        60% {background-position: 60% 100%}
+        65% {background-position: 65% 100%}
+        70% {background-position: 70% 100%}
+        75% {background-position: 75% 100%}
+        80% {background-position: 80% 100%}
+        85% {background-position: 85% 100%}
+        90% {background-position: 90% 100%}
+        95% {background-position: 95% 100%}
+        100% {background-position: 100% 100%}
+      }
+
+      .container {
+        background: rgba(0, 0, 0, 0.6);
+
+        width: 90vw;
+        position: absolute;
+        text-align: center;
+
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+      }
+
+      #time, #period, #update {
+        font-family: 'Open Sans Condensed';
+        font-size: 32px;
+
+        background-image: repeating-linear-gradient(to right,
+          #f82d98, #f82d98, #f82d98,
+          #ff6a63, #ff6a63,
+          #e7c501,
+          #c6e501,
+          #67ff6c,
+          #16e6cc,
+          #2ef9a0,
+          #67ff6c,
+          #c6e501,
+          #e7c501,
+          #ff6a63, #ff6a63,
+          #f82d98, #f82d98, #f82d98);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+
+        background-size: 800% 800%;
+        animation: rainbow 4s ease infinite;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <span class=text color-text-flow"" id="time"></span><br/>
+      <span class="text color-text-flow" id="period"></span><br/>
+      <span class="text color-text-flow" id="update"></span>
+    </div>
+  </body>
+</html>
