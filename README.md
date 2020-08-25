@@ -4,6 +4,10 @@ able to tell when the bell is going to ring. This program can be
 included in websites such as Google Sites as an embed file. Note
 that not all middle schools use the same schedule as Palombi.
 
+Update 8/25/20: This is not for remote learning but I will be
+creating a customizable bell schedule that can be used for
+different schools.
+
 ## TODO
 * Add Half Bell for Each Schedule
   * Lunch Half Bells for 4th, 5th, and 6th Period for 8 Period Schedule
